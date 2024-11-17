@@ -1,0 +1,29 @@
+// Load Leaflet
+let map = L.map('map').setView([-2.00, 117.50], 5); // Approximate center of Indonesia, zoom level 5
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { // OpenStreetMap tiles
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+
+// Fetch and load GeoJSON data
+fetch('indonesia_islands.geojson')
+  .then(response => response.json())
+  .then(data => {
+    L.geoJSON(data, {
+      style: function (feature) {
+        return {
+          fillColor: 'blue', // You can customize island colors
+          fillOpacity: 0.5,
+          weight: 1,
+          color: 'black'
+        };
+      },
+      onEachFeature: function (feature, layer) {
+        // Add popups with island names (if available in GeoJSON)
+        if (feature.properties && feature.properties.name) {
+          layer.bindPopup(feature.properties.name);
+        }
+      }
+    }).addTo(map);
+  });
